@@ -7,8 +7,10 @@ DEVKITARM ?= $(DEVKITPRO)/devkitARM
 export DEVKITPRO DEVKITARM
 export PATH := $(DEVKITARM)/bin:$(DEVKITPRO)/tools/bin:$(PATH)
 
-ifeq ($(shell which arm-none-eabi-gcc 2>/dev/null),)
-$(error arm-none-eabi-gcc not found. Install devkitARM or set DEVKITPRO=/path/to/devkitpro)
+# Check the compiler by its full path. (`which` inside $(shell) does NOT see the PATH exported above on
+# older GNU make, which made this check fail even inside the devkitARM container.)
+ifeq ($(wildcard $(DEVKITARM)/bin/arm-none-eabi-gcc*),)
+$(error arm-none-eabi-gcc not found in $(DEVKITARM)/bin. Install devkitARM or set DEVKITPRO=/path/to/devkitpro)
 endif
 
 CC      := arm-none-eabi-gcc
